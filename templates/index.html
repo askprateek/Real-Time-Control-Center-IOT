@@ -1,0 +1,230 @@
+<html>
+<head>
+  <title>My Project</title>
+  <!--Import Google Icon Font-->
+  <!--Import materialize.css | Add links to other css files after next line -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
+  <!--Let browser know website is optimized for mobile-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+      .hamburger {
+      position: relative;
+      display: inline-block;
+      width: 1.25em;
+      height: 0.8em;
+      margin-right: 0.3em;
+      border-top: 0.2em solid #fff;
+      border-bottom: 0.2em solid #fff;
+    }
+
+    .hamburger:before {
+      content: "";
+      position: absolute;
+      top: 0.3em;
+      left: 0px;
+      width: 100%;
+      border-top: 0.2em solid #fff;
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class = "black">
+
+    <ul class="right">
+
+    </ul>
+    <ul id="slide-out" class="side-nav linepadding">
+      <li> <a href="index.html">Home Automation</a>  </li>
+      <hr width =80%>
+      <li> <a href="security.html">Security</a>  </li>
+      <li > <div class="techsupport" ><hr width =80%> <div class="orange "> <a href="techsupport.html">Tech Support</a></div> </div> </li>
+
+
+    </ul>
+        <a href="#" data-activates="slide-out" class="button-collapse show-on-large"><img src="images/logo2small.png" style="width: 73px; margin-left: 26px;"></img></a>
+
+  </nav>
+  <!-- slider code ends here -->
+  <!-- Rooms lights and fans part begins here -->
+
+    <div class = "container ">
+
+          <h4 class ="center" > Room 1 </h4>
+          <span class="hamburger"></span>
+          <div class="collection">
+            <a href="#!" class="collection-item">Light
+                    <span class="badge">
+                        <!-- Switch -->
+                        <div class="switch" >
+                          <label>
+                            Off
+                          <input type="checkbox" onchange="turnon(this.checked, 'led/1/')">
+                          <span class="lever"></span>
+                            On
+                          </label>
+                        </div>
+                    </span>
+            </a>
+            <a href="#!" class="collection-item">Fan
+                    <span class="badge">
+                        <!-- Switch -->
+                        <div class="switch">
+                          <label>
+                            Off
+                          <input type="checkbox" onchange="turnon(this.checked, 'fan/1/')">
+                          <span class="lever"></span>
+                            On
+                          </label>
+                        </div>
+                    </span>
+            </a>
+          </div>
+
+          <h4 class ="center"> Room 2 </h4>
+          <div class="collection">
+            <a href="#!" class="collection-item">Light
+                    <span class="badge">
+                        <!-- Switch -->
+                        <div class="switch">
+                          <label>
+                            Off
+                          <input type="checkbox" onchange="turnon(this.checked, 'led/2/')">
+                          <span class="lever"></span>
+                            On
+                          </label>
+                        </div>
+                    </span>
+            </a>
+            <a href="#!" class="collection-item">Fan
+                    <span class="badge">
+                        <!-- Switch -->
+                        <div class="switch">
+                          <label>
+                            Off
+                          <input type="checkbox" onchange="turnon(this.checked, 'fan/2/')">
+                          <span class="lever"></span>
+                            On
+                          </label>
+                        </div>
+                    </span>
+            </a>
+          </div>
+
+          <h4 class ="center"> Master Switch </h4>
+          <div class="collection">
+            <a href="#!" class="collection-item">Status
+                    <span class="badge">
+                        <!-- Switch -->
+                        <div class="switch">
+                          <label>
+                            Off
+                          <input type="checkbox" onchange="masterswitch(this.checked)">
+                          <span class="lever"></span>
+                            On
+                          </label>
+                        </div>
+                    </span>
+            </a>
+
+          </div>
+          <div class="row">
+            <div class="col s12 center">
+            <h4 id="temp"></h4>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s12 center">
+            <button class="btn" onclick() = "lock('lock/')">Lock Down</button>
+            </div>
+          </div>
+
+    </div>
+
+  <!--Import jQuery before materialize.js-->
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
+  <script>
+  function lock(data){
+    var master ="http://192.168.0.3:5000/";            //Frontend url without HTTPS
+    var master_url = master + data ;
+    console.log(master_url);
+    $.ajax({ type: "GET",
+             url: master_url,
+             async: true,
+
+      success : function(data)
+      {
+        console.log(master_url);
+        console.log(data);
+      }
+    });
+  }
+
+
+  function turnon(bool, link){
+    console.log(link);
+    var status = 0;
+    if (bool){
+      status =1;
+    }
+    console.log(status);
+    var test = "http://192.168.0.3:5000/";  // FRONTEND URL HERE ++++++++++++++++++++++++++++++++++++++++++++++
+    var api_url = test + link  + status + "/";
+    $.ajax({ type: "GET",
+    url: api_url,
+    async: true,
+  //  datatype: "json",
+    success : function(data)
+    {
+      console.log(api_url);
+      console.log(data);
+    }
+  });
+}
+// master switch function begins here
+    function masterswitch(bool){
+        var mcb ;
+        if(bool){
+          mcb = "allon/";
+          }
+        else
+          {mcb = "alloff/";}
+        console.log(mcb);
+        var master ="http://192.168.0.3:5000/";            //Frontend url without HTTPS
+        var master_url = master + mcb ;
+        console.log(master_url);
+        $.ajax({ type: "GET",
+                 url: master_url,
+                 async: true,
+
+          success : function(data)
+          {
+            console.log(master_url);
+            console.log(data);
+          }
+        });
+      }
+// masterswitch function ends here
+
+$(document).ready(function(){
+  $(".button-collapse").sideNav();
+  $.ajax({ type: "GET",
+  url: "https://192.168.0.2:8000/temp/",
+  async: true,
+//  datatype: "json",
+  success : function(data)
+  {
+    //console.log(test);
+    console.log(data);
+    data = "Temperature : " + data;
+    $("#temp").html(data);
+  }
+});
+
+
+});
+</script>
+</body>
+</html>
