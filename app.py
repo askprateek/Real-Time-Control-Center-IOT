@@ -27,7 +27,7 @@ def requires_auth(f):
 
 
 
-piserver = "https://192.168.0.2:8000/"                #BACKEND | PISERVER URL HERE
+piserver = "https://172.16.15.252:8000/"                #BACKEND | PISERVER URL HERE
 #socket.create_connection(('182.64.172.241', 8000), timeout=2)
 
 @app.route('/')
@@ -36,13 +36,18 @@ def home():
     #url = piserver + "temp/"
     #send = requests.get(url, verify = False)
     return render_template('index.html')
+@app.route('/api/')
+def device():
+    url = "https://172.16.15.252:8000/status/"
+    return requests.get(url, verify =False).content
 
-@app.route('/<string:all_device>/')
-#@requires_auth
-def master(all_device):
-    url = piserver + all_device + '/'
-    send = requests.get(url, verify = False)
-    return url
+# @app.route('/<string:all_device>/')
+# #@requires_auth'''
+#
+# # def master(all_device):
+# #     url = piserver + all_device + '/'
+# #     send = requests.get(url, verify = False)
+# #     return url
 
 @app.route('/<string:device>/<string:device_id>/<string:status>/')
 #@requires_auth
