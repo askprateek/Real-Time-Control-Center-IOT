@@ -13,7 +13,9 @@ app = Flask(__name__, static_url_path='')
 
 # url_for('static', filename='style.css')
 
-piserver = "http://172.16.15.251:8000/"                #BACKEND | PISERVER URL HERE
+# piserver = "http://172.16.15.251:8000/"
+
+piserver = "http://192.168.0.4:8000/"                #BACKEND | PISERVER URL HERE
 #socket.create_connection(('182.64.172.241', 8000), timeout=2)
 
 @app.route('/')
@@ -59,4 +61,4 @@ def contact_pi(device,device_id,status):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host=os.getenv('IP', '0.0.0.0'),port=int(os.getenv('PORT', 5000)))
+    app.run(debug=True, host=os.getenv('IP', '0.0.0.0'),port=int(os.getenv('PORT', 80)))
