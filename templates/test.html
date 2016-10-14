@@ -1,0 +1,212 @@
+<html>
+  <head>
+    <title>Control Panel</title>
+    <!--Import Google Icon Font-->
+    <!--Import materialize.css | Add links to other css files after next line -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <style>
+
+    @font-face{
+      font-family:custom;
+      src: url('font.ttf');
+    }
+    body{
+      font-family:custom;
+    }
+    .hamburger {
+      position: relative;
+      display: inline-block;
+      width: 1.25em;
+      height: 0.8em;
+      margin-right: 0.3em;
+      border-top: 0.2em solid #fff;
+      border-bottom: 0.2em solid #fff;
+    }
+
+    .hamburger:before {
+      content: "";
+      position: absolute;
+      top: 0.3em;
+      left: 0px;
+      width: 100%;
+      border-top: 0.2em solid #fff;
+    }
+    .switch label .lever{
+      width: 60px;
+      height: 25px;
+    }
+    .switch label .lever:after{
+      width: 30px;
+      height: 30px;
+    }
+    .collection{
+      border: 3px solid #DCDCDC;
+    }
+    .collection a.collection-item{
+      font-size: 20px;
+      padding: 15px 20px;
+      /*color: #00bcd4;*/
+      color :#000;
+      text-shadow: 0px 0px 1px #DCDCDC;
+    }
+
+    @keyframes back{
+      0%,100%  { background: black;}
+      25%, 75% { background: #ffab40;}
+      50%      { background: #f44336; }
+    }
+    @keyframes back2{
+      0%,100%  { color: black;}
+      25%, 75% { color: #ffab40;}
+      50%      { color: #f44336; }
+    }
+
+    .custom {
+      animation-name: back;
+      animation-duration: 5s;
+      animation-iteration-count: infinite;
+      animation-timing-function: ease-in-out;
+    }
+    .head{
+      animation-name: back2;
+      animation-duration: 5s;
+      animation-iteration-count: infinite;
+      animation-timing-function: ease-in-out;
+    }
+
+    </style>
+  </head>
+
+  <body>
+    <nav class="custom">
+      <div class="nav-wrapper">
+        <a class="brand-logo center">MPS Iot </a>
+      </div>
+    </nav>
+    <div class="container">
+      {% for room in home %}
+        <div class="row">
+          <div clas="col s12">
+            <div class="row center-align">
+            <h3 class="head">{{ room }}</h3>
+          </div>
+            <div class="collection">
+            {% for device in devices %}
+              {% if device.room == room %}
+                <a href="#!" class="collection-item">{{ device.name  }}
+                  <span class="badge">
+                  <!-- Switch -->
+                  <div class="switch" >
+                    <label>
+                      Off
+                      <input id ="{{ (device.type, device.device_id) | join('') }}" type="checkbox" onchange='turnon(this.checked, "{{ (device.type , device.device_id,'') | join('/') }}" )' >
+                      <span class="lever"></span>
+                      On
+                    </label>
+                  </div>
+                </span>
+              </a>
+              {% endif %}
+            {% endfor %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+    </div>
+
+
+    <!--Import jQuery before materialize.js-->
+    <script type="text/javascript" src="{{url_for('static', filename='jquery.js')}}"></script>
+    <script src="{{url_for('static', filename='script.js')}}"></script>
+    <script>
+
+
+  function turnon(bool, link){
+    console.log(link);
+    var status = 0;
+    if (bool){
+      status =1;
+    }
+    console.log(status);
+    // var test = "http://172.16.15.239:5000/";  // FRONTEND URL HERE ++++++++++++++++++++++++++++++++++++++++++++++
+    var api_url = "/" + link  + status + "/";
+    console.log(api_url);
+    $.ajax({ type: "GET",
+    url: api_url,//0.0.0.0
+    async: true,
+    //  datatype: "json",
+    success : function(data)
+    {
+      console.log(api_url);
+      console.log(data);
+    }
+  });
+  }
+  // master switch function begins here
+  function masterswitch(bool){
+  var mcb ;
+  if(bool){
+    mcb = "allon/";
+  }
+  else
+  {mcb = "alloff/";}
+  console.log(mcb);
+  // var master ="http://172.16.15.239:5000/";            //Frontend url without HTTPS
+  var master_url = piserver + mcb ;
+  console.log(master_url);
+  $.ajax({ type: "GET",
+  url: master_url,
+  async: true,
+
+  success : function(data)
+  {
+    console.log(master_url);
+    console.log(data);
+  }
+  });
+  }
+  // masterswitch function ends here
+
+  $(document).ready(function(){
+  $(".button-collapse").sideNav();
+
+  function checkStatus(text){
+    var daa;
+    console.log(text);
+    $.ajax({ type: "GET",
+      url: "/api/",
+      async: false,
+      datatype: "json",
+
+      success : function(data)
+      {
+        daa = JSON.parse(data);
+        // console.log(daa);
+        var i;
+
+        for (i =0 ; daa.length; i++){
+          // console.log(daa[i].type, daa[i].device_id);
+          var id_of_device= daa[i]['type'] + daa[i].device_id.toString()
+          // console.log(id_of_device);
+          if (document.getElementById(id_of_device).checked != daa[i].status) {
+            var toggle = document.getElementById(id_of_device);
+            toggle.checked = !toggle.checked;
+            console.log(toggle);
+          }
+        }
+
+      }
+    });
+  }
+
+  setInterval(function(){ checkStatus('Checking Device Status'); },1000);
+
+  });
+  </script>
+
+
+</body>
+</html>
