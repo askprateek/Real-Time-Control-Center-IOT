@@ -13,7 +13,7 @@ app = Flask(__name__, static_url_path='')
 
 # url_for('static', filename='style.css')
 
-# piserver = "http://172.16.15.251:8000/"
+# piserver = "http://172.16.15.225:8000/"
 
 piserver = "http://192.168.0.4:8000/"                #BACKEND | PISERVER URL HERE
 #socket.create_connection(('182.64.172.241', 8000), timeout=2)
